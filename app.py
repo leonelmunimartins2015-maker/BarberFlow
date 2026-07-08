@@ -19,7 +19,8 @@ def pegar_configuracao():
         "pigmentacao": 60,
         "corte_barba": 40,
         "corte_sobrancelha": 35,
-        "barba": 15
+        "barba": 15,
+        "corte_barba_pigmentacao": 65
     }
 
     if db:
