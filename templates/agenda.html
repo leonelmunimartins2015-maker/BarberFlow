@@ -17,13 +17,16 @@ body {
 }
 
 .container {
+
     width:90%;
     max-width:450px;
-    margin:40px auto;
+    margin:30px auto;
     background:#222;
     padding:25px;
     border-radius:15px;
+
 }
+
 
 input, select {
 
@@ -34,6 +37,7 @@ input, select {
     border:0;
 
 }
+
 
 button {
 
@@ -48,6 +52,7 @@ button {
 
 }
 
+
 .agendamento {
 
     background:#333;
@@ -57,13 +62,16 @@ button {
 
 }
 
+
 a {
     color:#c89b3c;
 }
 
+
 </style>
 
 </head>
+
 
 <body>
 
@@ -72,6 +80,12 @@ a {
 
 
 <h1>📅 Agenda</h1>
+
+
+<p>
+Expediente:
+{{ inicio_expediente }} até {{ fim_expediente }}
+</p>
 
 
 <form method="POST" action="/cadastrar_agendamento">
@@ -84,57 +98,79 @@ placeholder="Nome do cliente"
 required>
 
 
-<select name="servico" id="servico" onchange="calcularDuracao()" required>
+<select 
+id="servico"
+name="servico"
+onchange="gerarHorarios()"
+required>
+
 
 <option value="">
 Escolha o serviço
 </option>
 
-<option value="Corte">
+
+<option value="Corte" data-duracao="30">
 Corte - 30 minutos
 </option>
 
-<option value="Corte e pigmentação">
+
+<option value="Corte e pigmentação" data-duracao="60">
 Corte e pigmentação - 60 minutos
 </option>
 
-<option value="Corte e barba">
+
+<option value="Corte e barba" data-duracao="40">
 Corte e barba - 40 minutos
 </option>
 
-<option value="Corte e sobrancelha">
+
+<option value="Corte e sobrancelha" data-duracao="35">
 Corte e sobrancelha - 35 minutos
 </option>
 
-<option value="Barba">
+
+<option value="Barba" data-duracao="15">
 Barba - 15 minutos
 </option>
+
 
 </select>
 
 
-<input 
+
+<input
 type="date"
 name="data"
 required>
 
 
-<input 
-type="time"
+
+<select 
+id="hora"
 name="hora"
 required>
 
+<option>
+Escolha o horário
+</option>
 
-<input 
+</select>
+
+
+
+<input
 type="hidden"
 id="duracao"
 name="duracao"
 value="30">
 
 
+
 <p id="mostrarDuracao">
 Duração: 30 minutos
 </p>
+
 
 
 <button type="submit">
@@ -145,10 +181,13 @@ Agendar
 </form>
 
 
+
 <h2>Agendamentos</h2>
 
 
+
 {% for item in agendamentos %}
+
 
 <div class="agendamento">
 
@@ -177,14 +216,18 @@ Duração: {{ item.duracao }} minutos
 
 {% else %}
 
+
 <p>
 Nenhum agendamento.
 </p>
 
+
 {% endfor %}
 
 
+
 <br>
+
 
 <a href="/">
 Voltar
@@ -194,43 +237,113 @@ Voltar
 </div>
 
 
+
+
 <script>
 
-function calcularDuracao(){
 
-    let servico = document.getElementById("servico").value;
+function minutos(hora){
 
-    let duracao = 30;
+    let partes = hora.split(":");
+
+    return parseInt(partes[0]) * 60 +
+    parseInt(partes[1]);
+
+}
 
 
-    if(servico === "Corte"){
-        duracao = 30;
+
+function formatoHora(min){
+
+    let h = Math.floor(min / 60);
+
+    let m = min % 60;
+
+
+    return (
+        String(h).padStart(2,"0")
+        + ":" +
+        String(m).padStart(2,"0")
+    );
+
+}
+
+
+
+
+function gerarHorarios(){
+
+
+    let servico =
+    document.getElementById("servico");
+
+
+    let opcao =
+    servico.options[servico.selectedIndex];
+
+
+    if(!opcao.dataset.duracao){
+        return;
     }
 
-    else if(servico === "Corte e pigmentação"){
-        duracao = 60;
-    }
 
-    else if(servico === "Corte e barba"){
-        duracao = 40;
-    }
-
-    else if(servico === "Corte e sobrancelha"){
-        duracao = 35;
-    }
-
-    else if(servico === "Barba"){
-        duracao = 15;
-    }
+    let duracao =
+    parseInt(opcao.dataset.duracao);
 
 
-    document.getElementById("duracao").value = duracao;
+
+    document.getElementById("duracao").value =
+    duracao;
 
 
     document.getElementById("mostrarDuracao").innerHTML =
     "Duração: " + duracao + " minutos";
 
+
+
+    let inicio =
+    minutos("{{ inicio_expediente }}");
+
+
+    let fim =
+    minutos("{{ fim_expediente }}");
+
+
+
+    let lista =
+    document.getElementById("hora");
+
+
+    lista.innerHTML =
+    "";
+
+
+
+    for(
+        let tempo = inicio;
+        tempo + duracao <= fim;
+        tempo += duracao
+    ){
+
+        let option =
+        document.createElement("option");
+
+
+        option.value =
+        formatoHora(tempo);
+
+
+        option.text =
+        formatoHora(tempo);
+
+
+        lista.appendChild(option);
+
+    }
+
+
 }
+
 
 </script>
 
