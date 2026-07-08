@@ -16,14 +16,18 @@ body {
     text-align:center;
 }
 
+
 .container {
+
     width:90%;
     max-width:450px;
     margin:30px auto;
     background:#222;
     padding:25px;
     border-radius:15px;
+
 }
+
 
 input, select {
 
@@ -34,6 +38,7 @@ input, select {
     border:0;
 
 }
+
 
 button {
 
@@ -48,6 +53,7 @@ button {
 
 }
 
+
 .agendamento {
 
     background:#333;
@@ -57,9 +63,11 @@ button {
 
 }
 
+
 a {
     color:#c89b3c;
 }
+
 
 </style>
 
@@ -72,12 +80,18 @@ a {
 <div class="container">
 
 
-<h1>📅 Agenda</h1>
+<h1>📅 Agenda BarberFlow</h1>
 
 
 <p>
 Expediente:
 {{ inicio_expediente }} até {{ fim_expediente }}
+</p>
+
+
+<p>
+Agenda aberta por:
+{{ semanas_agenda }} semana(s)
 </p>
 
 
@@ -91,31 +105,42 @@ placeholder="Nome do cliente"
 required>
 
 
-<select id="servico" name="servico" onchange="gerarHorarios()" required>
+<select 
+id="servico"
+name="servico"
+onchange="gerarHorarios()"
+required>
+
 
 <option value="">
 Escolha o serviço
 </option>
 
+
 <option value="Corte" data-duracao="30">
 Corte - 30 minutos
 </option>
+
 
 <option value="Corte e pigmentação" data-duracao="60">
 Corte e pigmentação - 60 minutos
 </option>
 
+
 <option value="Corte e barba" data-duracao="40">
 Corte e barba - 40 minutos
 </option>
+
 
 <option value="Corte e sobrancelha" data-duracao="35">
 Corte e sobrancelha - 35 minutos
 </option>
 
+
 <option value="Barba" data-duracao="15">
 Barba - 15 minutos
 </option>
+
 
 </select>
 
@@ -128,7 +153,10 @@ onchange="gerarHorarios()"
 required>
 
 
-<select id="hora" name="hora" required>
+<select
+id="hora"
+name="hora"
+required>
 
 <option>
 Escolha o horário
@@ -149,14 +177,12 @@ Duração: 30 minutos
 </p>
 
 
-<button>
+<button type="submit">
 Agendar
 </button>
 
 
 </form>
-
-
 
 <h2>Agendamentos</h2>
 
@@ -165,22 +191,40 @@ Agendar
 
 <div class="agendamento">
 
-<p>Cliente: {{item.nome}}</p>
-<p>Serviço: {{item.servico}}</p>
-<p>Data: {{item.data}}</p>
-<p>Horário: {{item.hora}}</p>
-<p>Duração: {{item.duracao}} minutos</p>
+<p>
+Cliente: {{ item.nome }}
+</p>
+
+<p>
+Serviço: {{ item.servico }}
+</p>
+
+<p>
+Data: {{ item.data }}
+</p>
+
+<p>
+Horário: {{ item.hora }}
+</p>
+
+<p>
+Duração: {{ item.duracao }} minutos
+</p>
 
 </div>
 
+
 {% else %}
 
-<p>Nenhum agendamento.</p>
+<p>
+Nenhum agendamento.
+</p>
 
 {% endfor %}
 
 
 <br>
+
 
 <a href="/">
 Voltar
@@ -194,47 +238,32 @@ Voltar
 <script>
 
 
-let agendamentos = {{ agendamentos | tojson }};
+let agendamentos = [
 
+{% for item in agendamentos %}
 
+{
 
-function configurarDatas(){
+data:"{{ item.data }}",
 
-    let hoje = new Date();
+hora:"{{ item.hora }}",
 
+duracao:{{ item.duracao }}
 
-    let limite = new Date();
+},
 
-    limite.setDate(
-        hoje.getDate()+15
-    );
+{% endfor %}
 
-
-    let campo =
-    document.getElementById("data");
-
-
-    campo.min =
-    hoje.toISOString().split("T")[0];
-
-
-    campo.max =
-    limite.toISOString().split("T")[0];
-
-}
-
-
-
-configurarDatas();
+];
 
 
 
 function minutos(hora){
 
-    let p = hora.split(":");
+    let partes = hora.split(":");
 
-    return parseInt(p[0])*60+
-    parseInt(p[1]);
+    return parseInt(partes[0]) * 60 +
+    parseInt(partes[1]);
 
 }
 
@@ -242,34 +271,91 @@ function minutos(hora){
 
 function formatoHora(valor){
 
-    let h=Math.floor(valor/60);
+    let hora = Math.floor(valor / 60);
 
-    let m=valor%60;
+    let minuto = valor % 60;
 
 
-    return String(h).padStart(2,"0")
-    +":"
-    +String(m).padStart(2,"0");
+    return String(hora).padStart(2,"0")
+    + ":" +
+    String(minuto).padStart(2,"0");
 
 }
+
+
+
+function ocupado(data,hora,duracao){
+
+
+    let inicioNovo = minutos(hora);
+
+
+    let fimNovo = inicioNovo + duracao;
+
+
+
+    for(let ag of agendamentos){
+
+
+        if(ag.data == data){
+
+
+            let inicioExistente =
+            minutos(ag.hora);
+
+
+            let fimExistente =
+            inicioExistente + ag.duracao;
+
+
+
+            if(
+                inicioNovo < fimExistente &&
+                fimNovo > inicioExistente
+            ){
+
+                return true;
+
+            }
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
 
 
 
 function gerarHorarios(){
 
 
+    let servico =
+    document.getElementById("servico");
+
+
     let opcao =
-    document.getElementById("servico")
-    .selectedOptions[0];
+    servico.options[
+        servico.selectedIndex
+    ];
+
 
 
     if(!opcao.dataset.duracao){
+
         return;
+
     }
 
 
+
     let duracao =
-    parseInt(opcao.dataset.duracao);
+    parseInt(
+        opcao.dataset.duracao
+    );
 
 
 
@@ -277,17 +363,38 @@ function gerarHorarios(){
     duracao;
 
 
+
     document.getElementById("mostrarDuracao").innerHTML =
-    "Duração: "+duracao+" minutos";
+    "Duração: "
+    + duracao
+    + " minutos";
+
+
+
+    let data =
+    document.getElementById("data").value;
+
+
+
+    if(!data){
+
+        return;
+
+    }
 
 
 
     let inicio =
-    minutos("{{inicio_expediente}}");
+    minutos(
+        "{{ inicio_expediente }}"
+    );
+
 
 
     let fim =
-    minutos("{{fim_expediente}}");
+    minutos(
+        "{{ fim_expediente }}"
+    );
 
 
 
@@ -295,38 +402,56 @@ function gerarHorarios(){
     document.getElementById("hora");
 
 
-    lista.innerHTML="";
+
+    lista.innerHTML = "";
 
 
 
     for(
-        let tempo=inicio;
-        tempo+duracao<=fim;
-        tempo+=duracao
+        let tempo = inicio;
+        tempo + duracao <= fim;
+        tempo += duracao
     ){
 
 
-        let option =
-        document.createElement("option");
-
-
-        option.value =
+        let horario =
         formatoHora(tempo);
 
 
-        option.text =
-        formatoHora(tempo);
+
+        if(
+            !ocupado(
+                data,
+                horario,
+                duracao
+            )
+        ){
 
 
-        lista.appendChild(option);
+            let option =
+            document.createElement("option");
+
+
+            option.value =
+            horario;
+
+
+            option.text =
+            horario;
+
+
+            lista.appendChild(option);
+
+
+        }
+
 
     }
 
 
 }
 
-
-</script>
+    </script>
 
 
 </body>
