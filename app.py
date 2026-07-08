@@ -436,6 +436,26 @@ def salvar_configuracoes():
     <a href="/admin">Voltar</a>
     '''
 
+@app.route("/editar_agendamento/<id>")
+def editar_agendamento(id):
+
+    if "admin" not in session:
+        return redirect("/login")
+
+    agendamento = db.collection("agendamentos").document(id).get()
+
+    if agendamento.exists:
+
+        dados = agendamento.to_dict()
+
+        dados["id"] = id
+
+        return render_template(
+            "editar.html",
+            agendamento=dados
+        )
+
+    return "Agendamento não encontrado"
 @app.route("/cancelar_agendamento/<id>")
 def cancelar_agendamento(id):
 
