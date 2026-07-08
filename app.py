@@ -433,7 +433,17 @@ def salvar_configuracoes():
     <a href="/admin">Voltar</a>
     '''
 
+@app.route("/cancelar_agendamento/<id>")
+def cancelar_agendamento(id):
 
+    if "admin" not in session:
+        return redirect("/login")
+
+    if db:
+
+        db.collection("agendamentos").document(id).delete()
+
+    return redirect("/agenda")
 if __name__ == "__main__":
 
     app.run(
