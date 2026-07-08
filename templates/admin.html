@@ -3,18 +3,101 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Admin BarberFlow</title>
+<title>Painel Administrativo</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.container{
+    max-width:450px;
+    margin:40px auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+input,
+select,
+button{
+
+    width:95%;
+    padding:12px;
+    margin:10px;
+    border-radius:8px;
+    border:none;
+
+}
+
+button{
+
+    background:#c89b3c;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h1>💈 Painel Admin BarberFlow</h1>
+<div class="container">
 
-<p>Área do administrador</p>
+<h1>⚙️ Painel Administrativo</h1>
+
+<h3>Configurações da Agenda</h3>
+
+<label>Início do expediente</label>
+
+<input
+type="time"
+value="11:00"
+>
+
+<label>Fim do expediente</label>
+
+<input
+type="time"
+value="18:00"
+>
+
+<label>Agenda aberta por</label>
+
+<select>
+
+<option>1 semana</option>
+
+<option selected>2 semanas</option>
+
+<option>3 semanas</option>
+
+<option>4 semanas</option>
+
+</select>
+
+<button>
+
+Salvar Configurações
+
+</button>
+
+<br><br>
 
 <a href="/agenda">
-Voltar para agenda
+
+Voltar para Agenda
+
 </a>
+
+</div>
 
 </body>
 
