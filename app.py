@@ -59,6 +59,7 @@ def cadastrar_cliente():
     telefone = request.form["telefone"]
 
     if db:
+
         db.collection("clientes").add({
             "nome": nome,
             "telefone": telefone,
@@ -68,6 +69,7 @@ def cadastrar_cliente():
         mensagem = "Cliente salvo no Firebase!"
 
     else:
+
         mensagem = "Firebase não conectado."
 
 
@@ -85,22 +87,33 @@ def cadastrar_agendamento():
 
     nome = request.form["nome"]
     servico = request.form["servico"]
-    data = request.form["data"]
+
+    data_original = request.form["data"]
+
+    data_obj = datetime.strptime(
+        data_original,
+        "%Y-%m-%d"
+    )
+
+    data = data_obj.strftime(
+        "%d/%m/%Y"
+    )
+
     hora = request.form["hora"]
     duracao = int(request.form["duracao"])
 
 
+    novo_inicio = datetime.strptime(
+        f"{data} {hora}",
+        "%d/%m/%Y %H:%M"
+    )
+
+    novo_fim = novo_inicio + timedelta(
+        minutes=duracao
+    )
+
+
     if db:
-
-        novo_inicio = datetime.strptime(
-            f"{data} {hora}",
-            "%Y-%m-%d %H:%M"
-        )
-
-        novo_fim = novo_inicio + timedelta(
-            minutes=duracao
-        )
-
 
         existentes = db.collection("agendamentos").stream()
 
@@ -114,7 +127,7 @@ def cadastrar_agendamento():
 
                 inicio_existente = datetime.strptime(
                     f"{ag['data']} {ag['hora']}",
-                    "%Y-%m-%d %H:%M"
+                    "%d/%m/%Y %H:%M"
                 )
 
 
