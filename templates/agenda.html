@@ -281,7 +281,19 @@ function formatoHora(valor){
 
 }
 
+    function converterData(data){
 
+    if(data.includes("/")){
+
+        let partes = data.split("/");
+
+        return partes[2] + "-" + partes[1] + "-" + partes[0];
+
+    }
+
+    return data;
+
+    }
 
 function ocupado(data,hora,duracao){
 
@@ -296,7 +308,9 @@ function ocupado(data,hora,duracao){
     for(let ag of agendamentos){
 
 
-        if(ag.data == data){
+        if(
+    converterData(ag.data) == data
+        ){
 
 
             let inicioExistente =
