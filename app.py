@@ -13,7 +13,12 @@ def pegar_configuracao():
     configuracao = {
         "inicio_expediente": "11:00",
         "fim_expediente": "18:00",
-        "semanas_agenda": 2
+        "semanas_agenda": 2,
+        "corte": 30,
+        "pigmentacao": 60,
+        "corte_barba": 40,
+        "corte_sobrancelha": 35,
+        "barba": 15
     }
 
     if db:
@@ -39,7 +44,6 @@ def pegar_configuracao():
             )
 
     return configuracao
-
 
 
 def listar_clientes():
@@ -315,6 +319,12 @@ def salvar_configuracoes():
     fim = request.form["fim_expediente"]
     semanas = int(request.form["semanas_agenda"])
 
+    corte = request.form["corte"]
+    pigmentacao = request.form["pigmentacao"]
+    corte_barba = request.form["corte_barba"]
+    corte_sobrancelha = request.form["corte_sobrancelha"]
+    barba = request.form["barba"]
+
     if db:
 
         docs = db.collection("configuracoes").limit(1).stream()
@@ -322,18 +332,30 @@ def salvar_configuracoes():
         encontrado = False
 
         for doc in docs:
+                    
             db.collection("configuracoes").document(doc.id).update({
                 "inicio_expediente": inicio,
                 "fim_expediente": fim,
-                "semanas_agenda": semanas
+                "semanas_agenda": semanas,
+                "corte": corte,
+                "pigmentacao": pigmentacao,
+                "corte_barba": corte_barba,
+                "corte_sobrancelha": corte_sobrancelha,
+                "barba": barba
             })
+
             encontrado = True
 
         if not encontrado:
             db.collection("configuracoes").add({
                 "inicio_expediente": inicio,
                 "fim_expediente": fim,
-                "semanas_agenda": semanas
+                "semanas_agenda": semanas,
+                "corte": corte,
+                "pigmentacao": pigmentacao,
+                "corte_barba": corte_barba,
+                "corte_sobrancelha": corte_sobrancelha,
+                "barba": barba
             })
 
     return '''
