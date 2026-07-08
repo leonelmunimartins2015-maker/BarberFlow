@@ -135,22 +135,126 @@ def login():
             <a href="/login">Tentar novamente</a>
             """
 
+
     return """
-    <h2>🔒 Login Administrativo</h2>
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <form method="POST">
+<head>
 
-        <input 
-        type="password" 
-        name="senha"
-        placeholder="Senha">
+<meta charset="UTF-8">
 
-        <button>
-        Entrar
-        </button>
+<title>Login Admin - BarberFlow</title>
 
-    </form>
-    """
+<style>
+
+body {
+
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-family:Arial,sans-serif;
+
+    background-image:url("https://images.pexels.com/photos/13138476/pexels-photo-13138476.jpeg");
+    background-size:cover;
+    background-position:center;
+
+}
+
+
+.login {
+
+    width:350px;
+
+    background:#222;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    color:white;
+
+}
+
+
+input {
+
+    width:90%;
+    padding:15px;
+
+    margin:15px 0;
+
+    border-radius:10px;
+
+    border:0;
+
+    font-size:18px;
+
+}
+
+
+button {
+
+    width:95%;
+
+    padding:15px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:#c89b3c;
+
+    color:white;
+
+    font-size:18px;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="login">
+
+<h2>
+🔒 Painel Admin
+</h2>
+
+
+<form method="POST">
+
+<input
+type="password"
+name="senha"
+placeholder="Digite a senha">
+
+
+<button>
+Entrar
+</button>
+
+
+</form>
+
+
+</div>
+
+
+</body>
+
+</html>
+"""
 
 
 @app.route("/logout")
