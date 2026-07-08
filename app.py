@@ -1,7 +1,11 @@
 from flask import Flask, render_template, request
 from config import NOME_SISTEMA, VERSAO
+from firebase import iniciar_firebase
+from datetime import datetime
 
 app = Flask(__name__)
+
+db = iniciar_firebase()
 
 
 @app.route("/")
@@ -20,29 +24,25 @@ def cadastrar_cliente():
     nome = request.form["nome"]
     telefone = request.form["telefone"]
 
+    if db:
+        db.collection("clientes").add({
+            "nome": nome,
+            "telefone": telefone,
+            "data": datetime.now().strftime("%d/%m/%Y %H:%M")
+        })
+
+        mensagem = "Cliente salvo no Firebase!"
+
+    else:
+        mensagem = "Firebase não conectado."
+
+
     return f"""
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <title>Cliente cadastrado</title>
-    </head>
-
-    <body style="background:#111;color:white;text-align:center;font-family:Arial">
-
-        <h1>✅ Cliente cadastrado!</h1>
-
-        <p>Nome: {nome}</p>
-        <p>Telefone: {telefone}</p>
-
-        <br>
-
-        <a href="/clientes" style="color:#c89b3c">
-            Voltar para clientes
-        </a>
-
-    </body>
-    </html>
+    <h1>💈 {mensagem}</h1>
+    <p>Nome: {nome}</p>
+    <p>Telefone: {telefone}</p>
+    <br>
+    <a href="/clientes">Voltar</a>
     """
 
 
