@@ -103,9 +103,47 @@ def inicio():
     return render_template(
         "index.html"
     )
+@app.route("/login", methods=["GET", "POST"])
+def login():
 
+    if request.method == "POST":
+
+        senha = request.form["senha"]
+
+        if senha == "019283":
+
+            session["admin"] = True
+
+            return redirect("/admin")
+
+        else:
+
+            return """
+            <h2>❌ Senha incorreta</h2>
+            <a href="/login">Tentar novamente</a>
+            """
+
+    return """
+    <h2>🔒 Login Administrativo</h2>
+
+    <form method="POST">
+
+        <input 
+        type="password" 
+        name="senha"
+        placeholder="Senha">
+
+        <button>
+        Entrar
+        </button>
+
+    </form>
+    """
 @app.route("/admin")
 def admin():
+
+    if "admin" not in session:
+        return redirect("/login")
 
     config = pegar_configuracao()
 
