@@ -8,14 +8,43 @@ app = Flask(__name__)
 db = iniciar_firebase()
 
 
+def pegar_configuracao():
+
+    inicio = "11:00"
+    fim = "18:00"
+
+    if db:
+
+        dados = db.collection("configuracoes").limit(1).stream()
+
+        for item in dados:
+
+            config = item.to_dict()
+
+            inicio = config.get(
+                "inicio_expediente",
+                inicio
+            )
+
+            fim = config.get(
+                "fim_expediente",
+                fim
+            )
+
+    return inicio, fim
+
+
+
 @app.route("/")
 def inicio():
     return render_template("index.html")
 
 
+
 @app.route("/clientes")
 def clientes():
     return render_template("clientes.html")
+
 
 
 @app.route("/lista_clientes")
@@ -24,10 +53,12 @@ def lista_clientes():
     clientes = []
 
     if db:
+
         dados = db.collection("clientes").stream()
 
         for cliente in dados:
             clientes.append(cliente.to_dict())
+
 
     return render_template(
         "lista_clientes.html",
@@ -35,21 +66,33 @@ def lista_clientes():
     )
 
 
+
 @app.route("/agenda")
 def agenda():
 
     agendamentos = []
 
+    inicio, fim = pegar_configuracao()
+
+
     if db:
+
         dados = db.collection("agendamentos").stream()
 
         for agendamento in dados:
-            agendamentos.append(agendamento.to_dict())
+
+            agendamentos.append(
+                agendamento.to_dict()
+            )
+
 
     return render_template(
         "agenda.html",
-        agendamentos=agendamentos
+        agendamentos=agendamentos,
+        inicio_expediente=inicio,
+        fim_expediente=fim
     )
+
 
 
 @app.route("/cadastrar_cliente", methods=["POST"])
@@ -58,13 +101,19 @@ def cadastrar_cliente():
     nome = request.form["nome"]
     telefone = request.form["telefone"]
 
+
     if db:
 
         db.collection("clientes").add({
+
             "nome": nome,
             "telefone": telefone,
-            "data": datetime.now().strftime("%d/%m/%Y %H:%M")
+            "data": datetime.now().strftime(
+                "%d/%m/%Y %H:%M"
+            )
+
         })
+
 
         mensagem = "Cliente salvo no Firebase!"
 
@@ -82,6 +131,7 @@ def cadastrar_cliente():
     """
 
 
+
 @app.route("/cadastrar_agendamento", methods=["POST"])
 def cadastrar_agendamento():
 
@@ -90,23 +140,30 @@ def cadastrar_agendamento():
 
     data_original = request.form["data"]
 
+
     data_obj = datetime.strptime(
         data_original,
         "%Y-%m-%d"
     )
 
+
     data = data_obj.strftime(
         "%d/%m/%Y"
     )
 
+
     hora = request.form["hora"]
-    duracao = int(request.form["duracao"])
+
+    duracao = int(
+        request.form["duracao"]
+    )
 
 
     novo_inicio = datetime.strptime(
         f"{data} {hora}",
         "%d/%m/%Y %H:%M"
     )
+
 
     novo_fim = novo_inicio + timedelta(
         minutes=duracao
@@ -115,15 +172,20 @@ def cadastrar_agendamento():
 
     if db:
 
-        existentes = db.collection("agendamentos").stream()
+
+        existentes = db.collection(
+            "agendamentos"
+        ).stream()
 
 
         for item in existentes:
+
 
             ag = item.to_dict()
 
 
             if ag.get("data") == data:
+
 
                 inicio_existente = datetime.strptime(
                     f"{ag['data']} {ag['hora']}",
@@ -132,22 +194,27 @@ def cadastrar_agendamento():
 
 
                 duracao_existente = int(
-                    ag.get("duracao", 30)
+                    ag.get("duracao",30)
                 )
 
 
-                fim_existente = inicio_existente + timedelta(
-                    minutes=duracao_existente
+                fim_existente = (
+                    inicio_existente +
+                    timedelta(
+                        minutes=duracao_existente
+                    )
                 )
 
 
                 if novo_inicio < fim_existente and novo_fim > inicio_existente:
 
+
                     return """
                     <h1>❌ Horário ocupado!</h1>
-                    <p>Já existe um atendimento nesse período.</p>
+                    <p>Já existe atendimento nesse período.</p>
                     <a href="/agenda">Voltar</a>
                     """
+
 
 
         db.collection("agendamentos").add({
@@ -169,7 +236,9 @@ def cadastrar_agendamento():
         mensagem = "Firebase não conectado."
 
 
+
     return f"""
+
     <h1>💈 {mensagem}</h1>
 
     <p>Cliente: {nome}</p>
@@ -183,17 +252,22 @@ def cadastrar_agendamento():
     <a href="/agenda">
     Voltar para agenda
     </a>
+
     """
+
 
 
 @app.route("/teste")
 def teste():
 
     return {
+
         "sistema": NOME_SISTEMA,
         "versao": VERSAO,
         "status": "online"
+
     }
+
 
 
 if __name__ == "__main__":
