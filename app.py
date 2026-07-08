@@ -139,6 +139,16 @@ def login():
 
     </form>
     """
+
+
+@app.route("/logout")
+def logout():
+
+    session.pop("admin", None)
+
+    return redirect("/login")
+    
+
 @app.route("/admin")
 def admin():
 
