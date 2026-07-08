@@ -215,6 +215,14 @@ Duração: {{ item.duracao }} minutos
 
 {% if session.admin %}
 
+<a href="/editar_agendamento/{{ item.id }}">
+
+<button>
+Editar
+</button>
+
+</a>
+
 <a href="/cancelar_agendamento/{{ item.id }}"
 onclick="return confirm('Deseja cancelar este agendamento?')">
 
