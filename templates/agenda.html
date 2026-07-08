@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Agenda - BarberFlow</title>
+
+<style>
+
+body {
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+    text-align:center;
+}
+
+.container {
+    width:90%;
+    max-width:450px;
+    margin:40px auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+input, select {
+
+    width:90%;
+    padding:12px;
+    margin:8px;
+    border-radius:8px;
+    border:0;
+
+}
+
+
+button {
+
+    width:95%;
+    padding:14px;
+    margin-top:15px;
+    background:#c89b3c;
+    color:white;
+    border:0;
+    border-radius:10px;
+    font-size:17px;
+
+}
+
+
+.agendamento {
+
+    background:#333;
+    padding:15px;
+    margin:10px;
+    border-radius:10px;
+
+}
+
+a {
+    color:#c89b3c;
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>📅 Agenda</h1>
+
+
+<form method="POST" action="/cadastrar_agendamento">
+
+
+<input 
+type="text"
+name="nome"
+placeholder="Nome do cliente"
+required>
+
+
+<select name="servico" required>
+
+<option value="">
+Escolha o serviço
+</option>
+
+<option value="Corte">
+Corte - 30 minutos
+</option>
+
+<option value="Corte e pigmentação">
+Corte e pigmentação - 60 minutos
+</option>
+
+<option value="Corte e barba">
+Corte e barba - 40 minutos
+</option>
+
+<option value="Corte e sobrancelha">
+Corte e sobrancelha - 35 minutos
+</option>
+
+<option value="Barba">
+Barba - 15 minutos
+</option>
+
+</select>
+
+
+<input 
+type="date"
+name="data"
+required>
+
+
+<input 
+type="time"
+name="hora"
+required>
+
+
+<input 
+type="hidden"
+name="duracao"
+value="30">
+
+
+<button type="submit">
+Agendar
+</button>
+
+
+</form>
+
+
+<h2>Agendamentos</h2>
+
+
+{% for item in agendamentos %}
+
+<div class="agendamento">
+
+<p>
+Cliente: {{ item.nome }}
+</p>
+
+<p>
+Serviço: {{ item.servico }}
+</p>
+
+<p>
+Data: {{ item.data }}
+</p>
+
+<p>
+Horário: {{ item.hora }}
+</p>
+
+</div>
+
+
+{% else %}
+
+<p>
+Nenhum agendamento.
+</p>
+
+{% endfor %}
+
+
+<br>
+
+<a href="/">
+Voltar
+</a>
+
+
+</div>
+
+
+</body>
+
+</html>
