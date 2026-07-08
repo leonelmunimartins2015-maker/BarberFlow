@@ -83,6 +83,13 @@ def inicio():
         "index.html"
     )
 
+@app.route("/admin")
+def admin():
+
+    return render_template(
+        "admin.html"
+    )
+
 
 
 @app.route("/clientes")
