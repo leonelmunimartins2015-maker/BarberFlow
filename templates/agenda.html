@@ -88,21 +88,20 @@ Expediente:
 </p>
 
 
+
 <form method="POST" action="/cadastrar_agendamento">
 
 
-<input 
+
+<input
 type="text"
 name="nome"
 placeholder="Nome do cliente"
 required>
 
 
-<select 
-id="servico"
-name="servico"
-onchange="gerarHorarios()"
-required>
+
+<select id="servico" name="servico" onchange="gerarHorarios()" required>
 
 
 <option value="">
@@ -139,17 +138,16 @@ Barba - 15 minutos
 
 
 
-<input
+<input 
 type="date"
+id="data"
 name="data"
+onchange="gerarHorarios()"
 required>
 
 
 
-<select 
-id="hora"
-name="hora"
-required>
+<select id="hora" name="hora" required>
 
 <option>
 Escolha o horário
@@ -173,12 +171,14 @@ Duração: 30 minutos
 
 
 
-<button type="submit">
+<button>
 Agendar
 </button>
 
 
+
 </form>
+
 
 
 
@@ -192,23 +192,23 @@ Agendar
 <div class="agendamento">
 
 <p>
-Cliente: {{ item.nome }}
+Cliente: {{item.nome}}
 </p>
 
 <p>
-Serviço: {{ item.servico }}
+Serviço: {{item.servico}}
 </p>
 
 <p>
-Data: {{ item.data }}
+Data: {{item.data}}
 </p>
 
 <p>
-Horário: {{ item.hora }}
+Horário: {{item.hora}}
 </p>
 
 <p>
-Duração: {{ item.duracao }} minutos
+Duração: {{item.duracao}} minutos
 </p>
 
 </div>
@@ -228,10 +228,10 @@ Nenhum agendamento.
 
 <br>
 
-
 <a href="/">
 Voltar
 </a>
+
 
 
 </div>
@@ -242,31 +242,106 @@ Voltar
 <script>
 
 
+let agendamentos = {{ agendamentos | tojson }};
+
+
+
 function minutos(hora){
 
-    let partes = hora.split(":");
+    let p = hora.split(":");
 
-    return parseInt(partes[0]) * 60 +
-    parseInt(partes[1]);
+    return parseInt(p[0]) * 60 + parseInt(p[1]);
+
+}
+
+
+
+function formatoHora(valor){
+
+    let h = Math.floor(valor / 60);
+
+    let m = valor % 60;
+
+
+    return String(h).padStart(2,"0")
+    + ":"
+    + String(m).padStart(2,"0");
 
 }
 
 
 
-function formatoHora(min){
-
-    let h = Math.floor(min / 60);
-
-    let m = min % 60;
+function conflito(hora, duracao){
 
 
-    return (
-        String(h).padStart(2,"0")
-        + ":" +
-        String(m).padStart(2,"0")
-    );
+    let dataEscolhida =
+    document.getElementById("data").value;
+
+
+    let inicioNovo =
+    minutos(hora);
+
+
+    let fimNovo =
+    inicioNovo + duracao;
+
+
+
+    for(let ag of agendamentos){
+
+
+        if(ag.data == converterData(dataEscolhida)){
+
+
+            let inicioAg =
+            minutos(ag.hora);
+
+
+            let fimAg =
+            inicioAg + parseInt(ag.duracao);
+
+
+
+            if(inicioNovo < fimAg && fimNovo > inicioAg){
+
+                return true;
+
+            }
+
+        }
+
+
+    }
+
+
+    return false;
 
 }
+
+
+
+function converterData(data){
+
+
+    if(data.includes("/")){
+
+        return data;
+
+    }
+
+
+    let partes =
+    data.split("-");
+
+
+    return partes[2]
+    +"/"+
+    partes[1]
+    +"/"+
+    partes[0];
+
+}
+
 
 
 
@@ -283,8 +358,11 @@ function gerarHorarios(){
 
 
     if(!opcao.dataset.duracao){
+
         return;
+
     }
+
 
 
     let duracao =
@@ -296,8 +374,11 @@ function gerarHorarios(){
     duracao;
 
 
+
     document.getElementById("mostrarDuracao").innerHTML =
-    "Duração: " + duracao + " minutos";
+    "Duração: "
+    +duracao+
+    " minutos";
 
 
 
@@ -314,30 +395,42 @@ function gerarHorarios(){
     document.getElementById("hora");
 
 
-    lista.innerHTML =
-    "";
+    lista.innerHTML = "";
 
 
 
     for(
-        let tempo = inicio;
-        tempo + duracao <= fim;
-        tempo += duracao
+        let tempo=inicio;
+        tempo+duracao<=fim;
+        tempo+=duracao
     ){
 
-        let option =
-        document.createElement("option");
 
-
-        option.value =
+        let hora =
         formatoHora(tempo);
 
 
-        option.text =
-        formatoHora(tempo);
+
+        if(!conflito(hora,duracao)){
 
 
-        lista.appendChild(option);
+            let option =
+            document.createElement("option");
+
+
+            option.value =
+            hora;
+
+
+            option.text =
+            hora;
+
+
+            lista.appendChild(option);
+
+
+        }
+
 
     }
 
@@ -346,6 +439,7 @@ function gerarHorarios(){
 
 
 </script>
+
 
 
 </body>
