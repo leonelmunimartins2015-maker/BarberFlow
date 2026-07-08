@@ -381,6 +381,7 @@ def teste():
 
     }
 
+
 @app.route("/salvar_configuracoes", methods=["POST"])
 def salvar_configuracoes():
 
@@ -395,41 +396,49 @@ def salvar_configuracoes():
     barba = request.form["barba"]
     corte_barba_pigmentacao = request.form["corte_barba_pigmentacao"]
 
+
     if db:
 
         docs = db.collection("configuracoes").limit(1).stream()
 
         encontrado = False
 
+
         for doc in docs:
-                    
+
             db.collection("configuracoes").document(doc.id).update({
+
                 "inicio_expediente": inicio,
                 "fim_expediente": fim,
                 "semanas_agenda": semanas,
-                "corte": corte,
-                "pigmentacao": pigmentacao,
-                "corte_barba": corte_barba,
-                "corte_sobrancelha": corte_sobrancelha,
-                "barba": barba,
-                "corte_barba_pigmentacao": corte_barba_pigmentacao
+                "corte": int(corte),
+                "pigmentacao": int(pigmentacao),
+                "corte_barba": int(corte_barba),
+                "corte_sobrancelha": int(corte_sobrancelha),
+                "barba": int(barba),
+                "corte_barba_pigmentacao": int(corte_barba_pigmentacao)
+
             })
 
             encontrado = True
 
+
         if not encontrado:
+
             db.collection("configuracoes").add({
+
                 "inicio_expediente": inicio,
                 "fim_expediente": fim,
                 "semanas_agenda": semanas,
-                "corte": corte,
-                "pigmentacao": pigmentacao,
-                "corte_barba": corte_barba,
-                "corte_sobrancelha": corte_sobrancelha,
-                "barba": barba,
-                "corte_barba_pigmentacao": corte_barba_pigmentacao
-                
+                "corte": int(corte),
+                "pigmentacao": int(pigmentacao),
+                "corte_barba": int(corte_barba),
+                "corte_sobrancelha": int(corte_sobrancelha),
+                "barba": int(barba),
+                "corte_barba_pigmentacao": int(corte_barba_pigmentacao)
+
             })
+
 
     return '''
     <h2>✅ Configurações salvas!</h2>
@@ -467,6 +476,55 @@ def salvar_edicao(id):
     data = request.form["data"]
     hora = request.form["hora"]
     duracao = request.form["duracao"]
+
+
+    data_obj = datetime.strptime(
+        data,
+        "%Y-%m-%d"
+    )
+
+    data = data_obj.strftime(
+        "%d/%m/%Y"
+    )
+
+
+    novo_inicio = datetime.strptime(
+        f"{data} {hora}",
+        "%d/%m/%Y %H:%M"
+    )
+
+
+    novo_fim = novo_inicio + timedelta(
+        minutes=int(duracao)
+    )
+
+
+    existentes = listar_agendamentos()
+
+
+    for ag in existentes:
+
+        if ag["id"] != id and ag.get("data") == data:
+
+
+            inicio_existente = datetime.strptime(
+                f"{ag['data']} {ag['hora']}",
+                "%d/%m/%Y %H:%M"
+            )
+
+
+            fim_existente = inicio_existente + timedelta(
+                minutes=int(ag.get("duracao", 30))
+            )
+
+
+            if novo_inicio < fim_existente and novo_fim > inicio_existente:
+
+                return """
+                <h2>❌ Horário ocupado!</h2>
+                <p>Esse horário já possui outro atendimento.</p>
+                <a href="/agenda">Voltar</a>
+                """
 
 
     if db:
