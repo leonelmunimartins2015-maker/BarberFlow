@@ -117,34 +117,32 @@ Escolha o serviço
 </option>
 
 
-<option value="Corte" data-duracao="30">
-Corte - 30 minutos
+<option value="Corte" data-duracao="{{ config.corte }}">
+Corte - {{ config.corte }} minutos
 </option>
 
 
-<option value="Corte e pigmentação" data-duracao="60">
-Corte e pigmentação - 60 minutos
+<option value="Corte e pigmentação" data-duracao="{{ config.pigmentacao }}">
+Corte e pigmentação - {{ config.pigmentacao }} minutos
+</option>
+
+<option value="Barba" data-duracao="{{ config.barba }}">
+Barba - {{ config.barba }} minutos
 </option>
 
 
-<option value="Corte e barba" data-duracao="40">
-Corte e barba - 40 minutos
+<option value="Corte e sobrancelha" data-duracao="{{ config.corte_sobrancelha }}">
+Corte e sobrancelha - {{ config.corte_sobrancelha }} minutos
 </option>
 
 
-<option value="Corte e sobrancelha" data-duracao="35">
-Corte e sobrancelha - 35 minutos
+<option value="Corte e barba" data-duracao="{{ config.corte_barba }}">
+Corte e barba - {{ config.corte_barba }} minutos
 </option>
 
-
-<option value="Barba" data-duracao="15">
-Barba - 15 minutos
+<option value="Corte, barba e pigmentação" data-duracao="{{ config.corte_barba_pigmentacao }}">
+Corte, barba e pigmentação - {{ config.corte_barba_pigmentacao }} minutos
 </option>
-
-<option value="Corte, barba e pigmentação" data-duracao="65">
-Corte, barba e pigmentação - 65 minutos
-</option>
-
 
 </select>
 
