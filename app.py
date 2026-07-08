@@ -308,6 +308,38 @@ def teste():
 
     }
 
+@app.route("/salvar_configuracoes", methods=["POST"])
+def salvar_configuracoes():
+
+    inicio = request.form["inicio_expediente"]
+    fim = request.form["fim_expediente"]
+    semanas = int(request.form["semanas_agenda"])
+
+    if db:
+
+        docs = db.collection("configuracoes").limit(1).stream()
+
+        encontrado = False
+
+        for doc in docs:
+            db.collection("configuracoes").document(doc.id).update({
+                "inicio_expediente": inicio,
+                "fim_expediente": fim,
+                "semanas_agenda": semanas
+            })
+            encontrado = True
+
+        if not encontrado:
+            db.collection("configuracoes").add({
+                "inicio_expediente": inicio,
+                "fim_expediente": fim,
+                "semanas_agenda": semanas
+            })
+
+    return '''
+    <h2>✅ Configurações salvas!</h2>
+    <a href="/admin">Voltar</a>
+    '''
 
 
 if __name__ == "__main__":
