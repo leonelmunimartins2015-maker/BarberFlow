@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Editar Agendamento</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.container{
+    max-width:400px;
+    margin:40px auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+input, select, button{
+
+    width:90%;
+    padding:12px;
+    margin:10px;
+    border-radius:8px;
+    border:0;
+
+}
+
+button{
+
+    background:#c89b3c;
+    color:white;
+    font-size:17px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+<h1>✏️ Editar Agendamento</h1>
+
+
+<form method="POST" action="/salvar_edicao/{{ agendamento.id }}">
+
+
+<input
+type="text"
+name="nome"
+value="{{ agendamento.nome }}"
+required>
+
+
+<select name="servico">
+
+<option>
+{{ agendamento.servico }}
+</option>
+
+</select>
+
+
+<input
+type="date"
+name="data"
+value="{{ agendamento.data }}">
+
+
+<input
+type="time"
+name="hora"
+value="{{ agendamento.hora }}">
+
+
+<input
+type="hidden"
+name="duracao"
+value="{{ agendamento.duracao }}">
+
+
+<button>
+Salvar Alteração
+</button>
+
+
+</form>
+
+
+<br>
+
+<a href="/agenda">
+Voltar
+</a>
+
+
+</div>
+
+
+</body>
+
+</html>
