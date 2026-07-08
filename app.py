@@ -280,6 +280,8 @@ def cadastrar_agendamento():
 
     nome = request.form["nome"]
 
+    telefone = request.form["telefone"]
+
     servico = request.form["servico"]
 
     data_original = request.form["data"]
@@ -363,6 +365,7 @@ def cadastrar_agendamento():
         db.collection("agendamentos").add({
 
             "nome": nome,
+            "telefone": telefone,
             "servico": servico,
             "data": data,
             "hora": hora,
