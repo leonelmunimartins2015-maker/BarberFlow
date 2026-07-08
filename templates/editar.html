@@ -65,8 +65,28 @@ required>
 
 <select name="servico">
 
-<option>
-{{ agendamento.servico }}
+<option {% if agendamento.servico == "Corte" %}selected{% endif %}>
+Corte
+</option>
+
+<option {% if agendamento.servico == "Corte e pigmentação" %}selected{% endif %}>
+Corte e pigmentação
+</option>
+
+<option {% if agendamento.servico == "Corte e barba" %}selected{% endif %}>
+Corte e barba
+</option>
+
+<option {% if agendamento.servico == "Corte e sobrancelha" %}selected{% endif %}>
+Corte e sobrancelha
+</option>
+
+<option {% if agendamento.servico == "Barba" %}selected{% endif %}>
+Barba
+</option>
+
+<option {% if agendamento.servico == "Corte, barba e pigmentação" %}selected{% endif %}>
+Corte, barba e pigmentação
 </option>
 
 </select>
