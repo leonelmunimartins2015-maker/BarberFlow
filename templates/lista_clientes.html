@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<title>Lista de Clientes - BarberFlow</title>
+
+<style>
+
+body {
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+    text-align:center;
+}
+
+.container {
+    width:90%;
+    max-width:500px;
+    margin:40px auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+.cliente {
+    background:#333;
+    padding:15px;
+    margin:10px;
+    border-radius:10px;
+}
+
+a {
+    color:#c89b3c;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💈 Clientes cadastrados</h1>
+
+{% for cliente in clientes %}
+
+<div class="cliente">
+
+<p><b>Nome:</b> {{ cliente.nome }}</p>
+
+<p><b>Telefone:</b> {{ cliente.telefone }}</p>
+
+<p><b>Cadastro:</b> {{ cliente.data }}</p>
+
+</div>
+
+{% else %}
+
+<p>Nenhum cliente cadastrado.</p>
+
+{% endfor %}
+
+<br>
+
+<a href="/">Voltar</a>
+
+</div>
+
+</body>
+
+</html>
