@@ -42,6 +42,22 @@ def pegar_configuracao():
             configuracao["semanas_agenda"] = int(
                 doc.get("semanas_agenda", 2)
             )
+            configuracao["corte"] = int(doc.get("corte", 30))
+
+            configuracao["pigmentacao"] = int(doc.get("pigmentacao", 60))
+
+            configuracao["corte_barba"] = int(doc.get("corte_barba", 40))
+
+            configuracao["corte_sobrancelha"] = int(doc.get("corte_sobrancelha", 35))
+
+            configuracao["barba"] = int(doc.get("barba", 15))
+
+            configuracao["corte_barba_pigmentacao"] = int(
+               doc.get("corte_barba_pigmentacao", 65)
+            )
+
+    
+    
 
     return configuracao
 
