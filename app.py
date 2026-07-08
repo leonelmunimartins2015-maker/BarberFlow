@@ -9,6 +9,11 @@ def inicio():
     return render_template("index.html")
 
 
+@app.route("/clientes")
+def clientes():
+    return render_template("clientes.html")
+
+
 @app.route("/teste")
 def teste():
     return {
