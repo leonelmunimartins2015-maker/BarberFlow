@@ -96,8 +96,17 @@ def listar_agendamentos():
 
             lista.append(ag)
 
-    return lista
 
+    # Ordenar por data e horário
+    lista.sort(
+        key=lambda x: datetime.strptime(
+            f"{x.get('data')} {x.get('hora')}",
+            "%d/%m/%Y %H:%M"
+        )
+    )
+
+
+    return lista
 
 
 @app.route("/")
