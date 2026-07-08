@@ -10,8 +10,11 @@ db = iniciar_firebase()
 
 def pegar_configuracao():
 
-    inicio = "11:00"
-    fim = "18:00"
+    configuracao = {
+        "inicio_expediente": "11:00",
+        "fim_expediente": "18:00",
+        "semanas_agenda": 2
+    }
 
     if db:
 
@@ -19,23 +22,43 @@ def pegar_configuracao():
 
         for item in dados:
 
-            config = item.to_dict()
+            doc = item.to_dict()
 
-            inicio = config.get(
+            configuracao["inicio_expediente"] = doc.get(
                 "inicio_expediente",
-                inicio
+                "11:00"
             )
 
-            fim = config.get(
+            configuracao["fim_expediente"] = doc.get(
                 "fim_expediente",
-                fim
+                "18:00"
             )
 
-    return inicio, fim
+            configuracao["semanas_agenda"] = int(
+                doc.get("semanas_agenda", 2)
+            )
+
+    return configuracao
 
 
 
-def pegar_agendamentos():
+def listar_clientes():
+
+    lista = []
+
+    if db:
+
+        dados = db.collection("clientes").stream()
+
+        for item in dados:
+
+            lista.append(item.to_dict())
+
+    return lista
+
+
+
+def listar_agendamentos():
 
     lista = []
 
@@ -56,51 +79,43 @@ def pegar_agendamentos():
 @app.route("/")
 def inicio():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html"
+    )
 
 
 
 @app.route("/clientes")
 def clientes():
 
-    return render_template("clientes.html")
+    return render_template(
+        "clientes.html"
+    )
 
 
 
 @app.route("/lista_clientes")
 def lista_clientes():
 
-    clientes = []
-
-    if db:
-
-        dados = db.collection("clientes").stream()
-
-        for cliente in dados:
-
-            clientes.append(cliente.to_dict())
-
-
     return render_template(
         "lista_clientes.html",
-        clientes=clientes
+        clientes=listar_clientes()
     )
-
-
 
 @app.route("/agenda")
 def agenda():
 
-    inicio, fim = pegar_configuracao()
+    config = pegar_configuracao()
 
-    agendamentos = pegar_agendamentos()
+    agendamentos = listar_agendamentos()
 
 
     return render_template(
         "agenda.html",
         agendamentos=agendamentos,
-        inicio_expediente=inicio,
-        fim_expediente=fim
+        inicio_expediente=config["inicio_expediente"],
+        fim_expediente=config["fim_expediente"],
+        semanas_agenda=config["semanas_agenda"]
     )
 
 
@@ -124,7 +139,6 @@ def cadastrar_cliente():
 
         })
 
-
         mensagem = "Cliente salvo no Firebase!"
 
     else:
@@ -132,12 +146,20 @@ def cadastrar_cliente():
         mensagem = "Firebase não conectado."
 
 
+
     return f"""
+
     <h1>💈 {mensagem}</h1>
+
     <p>Nome: {nome}</p>
     <p>Telefone: {telefone}</p>
+
     <br>
-    <a href="/clientes">Voltar</a>
+
+    <a href="/clientes">
+    Voltar
+    </a>
+
     """
 
 
@@ -146,14 +168,17 @@ def cadastrar_cliente():
 def cadastrar_agendamento():
 
     nome = request.form["nome"]
+
     servico = request.form["servico"]
 
     data_original = request.form["data"]
+
 
     data_obj = datetime.strptime(
         data_original,
         "%Y-%m-%d"
     )
+
 
     data = data_obj.strftime(
         "%d/%m/%Y"
@@ -178,11 +203,9 @@ def cadastrar_agendamento():
     )
 
 
-
     if db:
 
-
-        existentes = pegar_agendamentos()
+        existentes = listar_agendamentos()
 
 
         for ag in existentes:
@@ -201,7 +224,7 @@ def cadastrar_agendamento():
                     inicio_existente +
                     timedelta(
                         minutes=int(
-                            ag.get("duracao",30)
+                            ag.get("duracao", 30)
                         )
                     )
                 )
@@ -211,9 +234,17 @@ def cadastrar_agendamento():
 
 
                     return """
+
                     <h1>❌ Horário ocupado!</h1>
-                    <p>Já existe atendimento nesse período.</p>
-                    <a href="/agenda">Voltar</a>
+
+                    <p>
+                    Já existe atendimento nesse período.
+                    </p>
+
+                    <a href="/agenda">
+                    Voltar
+                    </a>
+
                     """
 
 
@@ -235,8 +266,6 @@ def cadastrar_agendamento():
     else:
 
         mensagem = "Firebase não conectado."
-
-
 
     return f"""
 
