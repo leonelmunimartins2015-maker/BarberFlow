@@ -35,14 +35,34 @@ def pegar_configuracao():
 
 
 
+def pegar_agendamentos():
+
+    lista = []
+
+    if db:
+
+        dados = db.collection("agendamentos").stream()
+
+        for item in dados:
+
+            ag = item.to_dict()
+
+            lista.append(ag)
+
+    return lista
+
+
+
 @app.route("/")
 def inicio():
+
     return render_template("index.html")
 
 
 
 @app.route("/clientes")
 def clientes():
+
     return render_template("clientes.html")
 
 
@@ -57,6 +77,7 @@ def lista_clientes():
         dados = db.collection("clientes").stream()
 
         for cliente in dados:
+
             clientes.append(cliente.to_dict())
 
 
@@ -70,20 +91,9 @@ def lista_clientes():
 @app.route("/agenda")
 def agenda():
 
-    agendamentos = []
-
     inicio, fim = pegar_configuracao()
 
-
-    if db:
-
-        dados = db.collection("agendamentos").stream()
-
-        for agendamento in dados:
-
-            agendamentos.append(
-                agendamento.to_dict()
-            )
+    agendamentos = pegar_agendamentos()
 
 
     return render_template(
@@ -140,12 +150,10 @@ def cadastrar_agendamento():
 
     data_original = request.form["data"]
 
-
     data_obj = datetime.strptime(
         data_original,
         "%Y-%m-%d"
     )
-
 
     data = data_obj.strftime(
         "%d/%m/%Y"
@@ -170,18 +178,14 @@ def cadastrar_agendamento():
     )
 
 
+
     if db:
 
 
-        existentes = db.collection(
-            "agendamentos"
-        ).stream()
+        existentes = pegar_agendamentos()
 
 
-        for item in existentes:
-
-
-            ag = item.to_dict()
+        for ag in existentes:
 
 
             if ag.get("data") == data:
@@ -193,15 +197,12 @@ def cadastrar_agendamento():
                 )
 
 
-                duracao_existente = int(
-                    ag.get("duracao",30)
-                )
-
-
                 fim_existente = (
                     inicio_existente +
                     timedelta(
-                        minutes=duracao_existente
+                        minutes=int(
+                            ag.get("duracao",30)
+                        )
                     )
                 )
 
