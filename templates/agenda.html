@@ -233,8 +233,7 @@ Duração: 30 minutos
 
 <label>⏱️ Deseja alterar o tempo do serviço?</label>
 
-<select id="alterarTempo" onchange="mostrarCampoTempo()">
-
+<select id="alterarTempo" onchange="mostrarCampoTempo(); gerarHorarios()">
 <option value="nao">
 Não
 </option>
@@ -252,11 +251,11 @@ Sim
 <input
 type="number"
 id="novoTempo"
+min="5"
 placeholder="Ex: 90"
 oninput="gerarHorarios()">
 
 </div>
-
 
 <button type="submit">
 Agendar
@@ -529,11 +528,10 @@ if(alterar == "sim"){
 
 
     for(
-        let tempo = inicio;
-        tempo + duracao <= fim;
-        tempo += duracao
-    ){
-
+    let tempo = inicio;
+    tempo < fim;
+    tempo += 5
+){
 
         let horario =
         formatoHora(tempo);
