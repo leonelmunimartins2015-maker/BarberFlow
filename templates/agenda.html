@@ -190,6 +190,7 @@ Agendar
 
 
 </form>
+{% if session.admin %}
 
 <h2>Agendamentos</h2>
 
@@ -199,81 +200,49 @@ id="pesquisa"
 placeholder="🔍 Pesquisar cliente..."
 onkeyup="filtrarAgendamentos()">
 
-
 {% for item in agendamentos %}
 
 <div class="agendamento" data-nome="{{ item.nome|lower }}">
 
-<p>
-Cliente: {{ item.nome }}
-</p>
+<p>Cliente: {{ item.nome }}</p>
 
-<p>
-📱 Telefone: {{ item.telefone }}
-</p>
+<p>📱 Telefone: {{ item.telefone }}</p>
 
-<p>
-Serviço: {{ item.servico }}
-</p>
+<p>Serviço: {{ item.servico }}</p>
 
-<p>
-Data: {{ item.data }}
-</p>
+<p>Data: {{ item.data }}</p>
 
-<p>
-Horário: {{ item.hora }}
-</p>
+<p>Horário: {{ item.hora }}</p>
 
-<p>
-Duração: {{ item.duracao }} minutos
-</p>
-
-{% if session.admin %}
+<p>Duração: {{ item.duracao }} minutos</p>
 
 {% if item.telefone %}
 
-<a href="https://wa.me/55{{ item.telefone }}?text=Olá%20{{ item.nome }}!%20Seu%20atendimento%20na%20BarberFlow%20está%20confirmado%20para%20{{ item.data }}%20às%20{{ item.hora }}.%20Serviço:%20{{ item.servico }}.%20💈"
-target="_blank">
+<a href="https://wa.me/55{{ item.telefone }}?text=Olá%20{{ item.nome }}!%20Seu%20atendimento%20na%20BarberFlow%20está%20confirmado%20para%20{{ item.data }}%20às%20{{ item.hora }}.%20Serviço:%20{{ item.servico }}.%20💈" target="_blank">
 
-<button>
-📲 WhatsApp
-</button>
+<button>📲 WhatsApp</button>
 
 </a>
 
 {% endif %}
-
 
 <a href="/editar_agendamento/{{ item.id }}">
-
-<button>
-✏️ Editar
-</button>
-
+<button>✏️ Editar</button>
 </a>
 
-
-<a href="/cancelar_agendamento/{{ item.id }}"
-onclick="return confirm('Deseja cancelar este agendamento?')">
-
-<button>
-🗑️ Cancelar
-</button>
-
+<a href="/cancelar_agendamento/{{ item.id }}" onclick="return confirm('Deseja cancelar este agendamento?')">
+<button>🗑️ Cancelar</button>
 </a>
 
-
-{% endif %}
-
+</div>
 
 {% else %}
 
-<p>
-Nenhum agendamento.
-</p>
+<p>Nenhum agendamento.</p>
 
 {% endfor %}
 
+{% endif %}
 
 <br>
 
