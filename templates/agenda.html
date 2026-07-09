@@ -463,6 +463,20 @@ function gerarHorarios(){
         opcao.dataset.duracao
     );
 
+    let alterar = document.getElementById("alterarTempo").value;
+
+if(alterar == "sim"){
+
+    let novo = document.getElementById("novoTempo").value;
+
+    if(novo){
+
+        duracao = parseInt(novo);
+
+    }
+
+}
+
 
 
     document.getElementById("duracao").value =
@@ -602,7 +616,6 @@ function filtrarAgendamentos(){
     });
 
 }
-    }
 
 function mostrarCampoTempo(){
 
