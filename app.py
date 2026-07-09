@@ -126,7 +126,7 @@ def login():
 
             session["admin"] = True
 
-            return redirect("/admin")
+            return redirect("/agenda")
 
         else:
 
