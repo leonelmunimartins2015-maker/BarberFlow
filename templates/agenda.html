@@ -231,6 +231,31 @@ value="30">
 Duração: 30 minutos
 </p>
 
+<label>⏱️ Deseja alterar o tempo do serviço?</label>
+
+<select id="alterarTempo" onchange="mostrarCampoTempo()">
+
+<option value="nao">
+Não
+</option>
+
+<option value="sim">
+Sim
+</option>
+
+</select>
+
+<div id="campoTempo" style="display:none;">
+
+<label>Digite o novo tempo (minutos)</label>
+
+<input
+type="number"
+id="novoTempo"
+placeholder="Ex: 90">
+
+</div>
+
 
 <button type="submit">
 Agendar
@@ -577,6 +602,28 @@ function filtrarAgendamentos(){
     });
 
 }
+    }
+
+function mostrarCampoTempo(){
+
+    let escolha = document.getElementById("alterarTempo").value;
+
+    let campo = document.getElementById("campoTempo");
+
+    if(escolha == "sim"){
+
+        campo.style.display = "block";
+
+    }else{
+
+        campo.style.display = "none";
+
+        document.getElementById("novoTempo").value = "";
+
+    }
+
+}
+
     </script>
 
 
