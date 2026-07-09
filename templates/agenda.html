@@ -82,6 +82,16 @@ a {
 
 <h1>📅 Agenda BarberFlow</h1>
 
+{% if session.admin %}
+
+<a href="/admin">
+<button>
+⚙️ Configurações
+</button>
+</a>
+
+{% endif %}
+
 
 <p>
 Expediente:
